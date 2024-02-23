@@ -1,0 +1,153 @@
+swagger: '2.0'
+info:
+  version: '1.0.0'
+  title: 'REST API'
+  description: 'Clav server docs'
+
+securityDefinitions:
+  bearerAuth:
+    type: 'apiKey'
+    name: 'Authorization'
+    in: 'header'
+    description: 'Bearer authentication with a JWT'
+
+security:
+  - bearerAuth: []
+
+paths:
+  /:
+    get:
+      summary: 'Root endpoint'
+      responses:
+        200:
+          description: 'OK'
+          schema:
+            type: string
+            example: 'Hello from the server!'
+
+  /api/auth/register:
+    post:
+      summary: 'User registration route'
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: user
+          description: 'User details for registration'
+          required: true
+          schema:
+            $ref: '#/definitions/User'
+      responses:
+        201:
+          description: 'Created'
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: 'User registered successfully'
+              userId:
+                type: number
+                example: 1
+        400:
+          description: 'Bad Request'
+        500:
+          description: 'Server Error'
+
+  /api/auth/login:
+    post:
+      summary: 'User login route'
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: credentials
+          description: 'User login credentials'
+          required: true
+          schema:
+            type: object
+            properties:
+              email:
+                type: string
+                example: 'user@example.com'
+              password:
+                type: string
+                example: 'password'
+      responses:
+        200:
+          description: 'OK'
+          schema:
+            type: object
+            properties:
+              accessToken:
+                type: string
+                example: 'eyJhbGciOiJIUzI1NiIsIn...'
+              refreshToken:
+                type: string
+                example: 'eyJhbGciOiJIUzI1NiIsIn...'
+        400:
+          description: 'User not found or Invalid Password'
+        500:
+          description: 'Server Error'
+
+  /api/auth/token:
+    post:
+      summary: 'Refresh token route'
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: token
+          description: 'Refresh token'
+          required: true
+          schema:
+            type: object
+            properties:
+              token:
+                type: string
+                example: 'eyJhbGciOiJIUzI1NiIsIn...'
+      responses:
+        200:
+          description: 'OK'
+          schema:
+            type: object
+            properties:
+              accessToken:
+                type: string
+                example: 'eyJhbGciOiJIUzI1NiIsIn...'
+        401:
+          description: 'Unauthorized'
+        403:
+          description: 'Invalid Refresh Token'
+        500:
+          description: 'Server Error'
+
+  /api/auth/logout:
+    delete:
+      summary: 'Logout route to remove refresh token'
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: token
+          description: 'Refresh token'
+          required: true
+          schema:
+            type: object
+            properties:
+              token:
+                type: string
+                example: 'eyJhbGciOiJIUzI1NiIsIn...'
+      responses:
+        200:
+          description: 'OK'
+        500:
+          description: 'Server Error'

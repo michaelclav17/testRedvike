@@ -1,0 +1,6 @@
+Dockerfile
+.dockerignore
+.pnpm-store
+node_modules
+npm-debug.log
+dist
